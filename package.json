@@ -1,0 +1,15 @@
+{
+  "name": "massage-chaus-booking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Полноценный сайт записи на массаж",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0"
+  }
+}
