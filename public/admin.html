@@ -1,0 +1,13 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Записи — массаж</title><link rel="stylesheet" href="/admin.css"></head><body>
+<div class="wrap"><header><h1>Записи на массаж</h1><div><input id="password" type="password" placeholder="Пароль администратора"><button id="login">Войти</button></div></header>
+<div class="bar"><input id="date" type="date"><button id="all">Все</button><span id="status"></span></div><div id="list"></div></div>
+<script>
+let token="";
+const $=x=>document.getElementById(x);
+$("login").onclick=()=>{token=$("password").value;load()};
+$("all").onclick=()=>{$("date").value="";load()};
+$("date").onchange=load;
+async function load(){const q=$("date").value?"?date="+$("date").value:"";const r=await fetch("/api/admin/bookings"+q,{headers:{Authorization:"Bearer "+token}});const d=await r.json();if(!r.ok){$("status").textContent=d.error;return} $("status").textContent="Записей: "+d.bookings.length;$("list").innerHTML=d.bookings.map(b=>`<article><div><b>${b.date} ${b.time}</b> · ${b.duration} мин · ${b.service}</div><p>👤 ${esc(b.name)} &nbsp; 📞 ${esc(b.phone)}<br>📍 ${esc(b.place)}</p><span class="s ${b.status}">${b.status}</span><div class="actions"><button onclick="setStatus('${b.id}','confirmed')">Подтвердить</button><button onclick="setStatus('${b.id}','cancelled')">Отменить</button><button onclick="setStatus('${b.id}','completed')">Выполнено</button></div></article>`).join("")||"<p>Записей нет.</p>"}
+async function setStatus(id,status){await fetch("/api/admin/bookings/"+id,{method:"PATCH",headers:{"Authorization":"Bearer "+token,"content-type":"application/json"},body:JSON.stringify({status})});load()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+</script></body></html>
